@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -59,8 +60,10 @@ func (c *Clipper) Load(clippings ...Item) {
 // Save loaded clippings to Notion under the block that has
 // the given blockID.
 func (c *Clipper) Save(blockID string) error {
-
-	// TODO we need to handle dashes in blockID
+	blockID, err := formatBlockID(blockID)
+	if err != nil {
+		return err
+	}
 
 	payload := payload{
 		DataType: "block",
@@ -83,8 +86,9 @@ func (c *Clipper) Save(blockID string) error {
 		return err
 	}
 
-	// Set authentication cookie
+	// Set authentication cookie and content type
 	req.Header.Set("Cookie", fmt.Sprintf("token_v2=%s;", c.token))
+	req.Header.Set("Content-type", "application/json")
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -97,4 +101,23 @@ func (c *Clipper) Save(blockID string) error {
 	}
 
 	return nil
+}
+
+// Auto insert dashes if blockID does not contain any.
+func formatBlockID(blockID string) (string, error) {
+	if len(strings.Replace(blockID, "-", "", -1)) != 32 {
+		return "", fmt.Errorf("blockID does not have a correct length")
+	}
+
+	if !strings.Contains(blockID, "-") {
+		formatted := blockID[:8] + "-" +
+			blockID[8:12] + "-" +
+			blockID[12:16] + "-" +
+			blockID[16:20] + "-" +
+			blockID[20:]
+
+		return formatted, nil
+	}
+
+	return blockID, nil
 }

@@ -1,6 +1,6 @@
 # pocket2notion
 
-Currently, there is no way to export Pocket items into Notion because does not provide any API so far.
+Currently, there is no way to export Pocket items into Notion because Notion does not provide any API so far.
 This projects aims to give a way to append web pages to Notion using the lately introduced [Web Clipper](https://www.notion.so/Web-Clipper-ba54b19ecaeb466b8070b9e683c5fce1).
 
 As the Notion clipper does not give us a way to provide more information than just a title and a URL, we have no way to migrate tags from Pocket to Notion. In order to still pass them, I decided that tags will be appended to the title with a hashtag before. You can disable this feature with the `-t` flag.

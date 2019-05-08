@@ -10,20 +10,18 @@ import (
 )
 
 const url = "https://www.notion.so/api/v3/addWebClipperURLs"
-const defaultCapacity = 5
 
 // Clipper is used for clipping webpages into Notion.
 type Clipper struct {
-	token    string
-	capacity int
-	items    []Item
+	token string
+	items []Item
 }
 
 // New creates a new Clipper with a Notion authentication token.
 // This token can be retrieved from the "token_v2" cookie created
 // when authenticated from notion.so website.
 func New(token string) *Clipper {
-	return &Clipper{token: token, capacity: defaultCapacity}
+	return &Clipper{token: token}
 }
 
 // A Item is a single webpage item with a title and url.
@@ -39,12 +37,6 @@ type payload struct {
 	From     string `json:"from"`
 }
 
-// Capacity sets how many clippings are sent to Notion by http request.
-// The default value is 5.
-func (c *Clipper) Capacity(cap int) {
-	c.capacity = cap
-}
-
 // Empty clears the list of previously loaded clippings.
 func (c *Clipper) Empty() {
 	c.items = nil
@@ -58,7 +50,7 @@ func (c *Clipper) Load(clippings ...Item) {
 }
 
 // Save loaded clippings to Notion under the block that has
-// the given blockID.
+// the given blockID. When completed successfuly, empty loaded items.
 func (c *Clipper) Save(blockID string) error {
 	blockID, err := formatBlockID(blockID)
 	if err != nil {
@@ -99,6 +91,9 @@ func (c *Clipper) Save(blockID string) error {
 	if res.StatusCode != 200 {
 		return fmt.Errorf("wrong return value from Notion: %d", res.StatusCode)
 	}
+
+	// Empty the list of items
+	c.Empty()
 
 	return nil
 }

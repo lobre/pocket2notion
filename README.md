@@ -5,13 +5,13 @@ This projects aims to give a way to append web pages to Notion using the lately 
 
 As the Notion clipper does not give us a way to provide more information than just a title and a URL, we have no way to migrate tags from Pocket to Notion. In order to still pass them, I decided that tags will be appended to the title with a hashtag before. You can disable this feature with the `-t` flag.
 
-Add the `-h` flag to the pocket2notion command to see how to use it.
+Add the `-h` flag to the `pocket2notion` command to see how to use it.
 
 ## Notion clipper package
 
 The `clipper` package provides bindings to reproduce the HTTP request made by the clipper extension to add articles to Notion.
 
-**Disclaimer**
+### **Disclaimer**
 This package has been written by analysing the Chrome extension XHR call. This service exposed by Notion is not public and so there are no guarantees that parameters won't change.
 There are even good chances that it will evoluate as Notion might add new features to the clipper in the future.
 

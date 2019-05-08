@@ -21,12 +21,6 @@ func TestClipping(t *testing.T) {
 
 	c := New(token)
 
-	// 5 items clipped at the same time per request
-	c.Capacity(5)
-
-	// Clean if already loaded items
-	c.Empty()
-
 	// Prepare some items to be clipped
 	c.Load(
 		Item{Title: "My title", URL: "www.google.com"},

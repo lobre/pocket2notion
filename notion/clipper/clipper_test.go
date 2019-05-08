@@ -29,8 +29,8 @@ func TestClipping(t *testing.T) {
 
 	// Prepare some items to be clipped
 	c.Load(
-		Clipping{title: "My title", url: "www.google.com"},
-		Clipping{title: "My second title", url: "www.twitter.com"},
+		Item{Title: "My title", URL: "www.google.com"},
+		Item{Title: "My second title", URL: "www.twitter.com"},
 	)
 
 	// Do the actual clipping request to Notion

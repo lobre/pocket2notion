@@ -18,21 +18,55 @@ import (
 const pocketConsumerKeyFile = "pocket_consumer_key"
 const pocketAccessTokenFile = "pocket_auth.json"
 
-func listPocketItems(config *config.Project) error {
+func retrievePocketItems(config *config.Project, args arguments) ([]api.Item, error) {
+	fmt.Println("Pocket authentication...")
 	client, err := newPocketClient(config)
 	if err != nil {
-		return errors.Wrap(err, "can't instanciate Pocket client")
+		return nil, errors.Wrap(err, "can't instanciate Pocket client")
 	}
 
-	options := &api.RetrieveOption{}
+	options := &api.RetrieveOption{
+		Sort:       api.SortNewest,
+		DetailType: api.DetailTypeComplete,
+	}
+
+	if args.pocketCountFilter != 0 {
+		options.Count = args.pocketCountFilter
+	}
+
+	if args.pocketFavoritedFilter {
+		options.Favorite = api.FavoriteFilterFavorited
+	}
+
+	if args.pocketArchivedFilter {
+		options.State = api.StateArchive
+	}
+
+	if args.pocketTagFilter != "" {
+		options.Tag = args.pocketTagFilter
+	}
+
+	if args.pocketSearchFilter != "" {
+		options.Search = args.pocketSearchFilter
+	}
+
+	if args.pocketSinceFilter != 0 {
+		options.Since = args.pocketSinceFilter
+	}
+
+	fmt.Println("Fetching Pocket items...")
 	res, err := client.Retrieve(options)
 	if err != nil {
-		return errors.Wrap(err, "can't retrieve Pocket list")
+		return nil, errors.Wrap(err, "can't retrieve Pocket list")
 	}
 
-	fmt.Println(res)
+	// convert into slice
+	items := []api.Item{}
+	for _, item := range res.List {
+		items = append(items, item)
+	}
 
-	return nil
+	return items, nil
 }
 
 func newPocketClient(config *config.Project) (*api.Client, error) {
@@ -97,7 +131,6 @@ func obtainPocketAccessToken(consumerKey string) (*auth.Authorization, error) {
 			fmt.Fprintln(w, "Authorized.")
 			ch <- struct{}{}
 		}))
-	defer ts.Close()
 
 	redirectURL := ts.URL
 
@@ -110,6 +143,8 @@ func obtainPocketAccessToken(consumerKey string) (*auth.Authorization, error) {
 	fmt.Println(url)
 
 	<-ch
+
+	ts.Close()
 
 	return auth.ObtainAccessToken(consumerKey, requestToken)
 }

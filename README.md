@@ -13,21 +13,21 @@ Currently, the Notion Web Clipper does not give us a way to provide more informa
 
 ## Usage
 
-1. Get a Pocket consumer key 
+### 1. Get a Pocket consumer key 
 
 Go to https://getpocket.com/developer/apps/, create an app and gather the consumer key.
 
-2. Get your Notion authentication token
+### 2. Get your Notion authentication token
 
 As there is no official Notion API, you will need to fetch the value of an authenticated token that you can find using Chrome Developer Tools while browsing authenticated on notion.so. You need to gather the content of the `token_v2` cookie.
 
-3. Add tokens to configuration
+### 3. Add tokens to configuration
 
     mkdir -p ~/.config/pocket2notion
     echo "MY_POCKET_CONSUMER_KEY" > ~/.config/pocket2notion/pocket_consumer_key
     echo "MY_NOTION_TOKEN" > ~/.config/pocket2notion/notion_token
 
-4. Run pocket2notion
+### 4. Run pocket2notion
 
     ❯ pocket2notion -h
     Usage of ./pocket2notion:

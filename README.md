@@ -7,6 +7,15 @@ As the Notion clipper does not give us a way to provide more information than ju
 
 Add the `-h` flag to the `pocket2notion` command to see how to use it.
 
+## Usage
+
+Get a Pocket consumer key from https://getpocket.com/developer/apps/.
+
+    echo "MY_POCKET_API_CONSUMER_KEY" > ~/.config/pocket2notion/pocket_consumer_key
+    pocket2notion
+    # Visit the URL listed in order to authenticate with Pocket
+    # After succesful authentication, your Pocket article list will appear
+
 ## Notion clipper package
 
 The `clipper` package provides bindings to reproduce the HTTP request made by the clipper extension to add articles to Notion.

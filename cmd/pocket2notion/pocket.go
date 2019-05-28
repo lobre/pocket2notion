@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httptest"
 
@@ -70,8 +69,6 @@ func restorePocketAccessToken(config *config.Project, consumerKey string) (*auth
 	err = json.NewDecoder(file).Decode(accessToken)
 
 	if err != nil {
-		log.Println(err)
-
 		accessToken, err = obtainPocketAccessToken(consumerKey)
 		if err != nil {
 			return nil, err

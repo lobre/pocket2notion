@@ -23,7 +23,8 @@ import (
 )
 
 const configDir = ".config"
-const configDirPerm os.FileMode = 755
+const configDirPerm os.FileMode = 0755
+const configFilePerm os.FileMode = 0644
 const defaultFile = "config"
 
 // Project contains the information needed to compute paths
@@ -56,13 +57,13 @@ func NewProject(name string) (*Project, error) {
 // FilePath returns the path of a configuration file
 // under the current project.
 func (p *Project) FilePath(name string) string {
-	return ""
+	return filepath.Join(p.Path(), name)
 }
 
 // FilePathDefault returns the path of a the defualt configuration file
 // of the current project.
 func (p *Project) FilePathDefault() string {
-	return ""
+	return p.FilePath(defaultFile)
 }
 
 // Open returns an os.File from a name corresponding to a
@@ -70,7 +71,11 @@ func (p *Project) FilePathDefault() string {
 // Warning, the file should be closed after usage.
 // If the file does not exist, it will be created first.
 func (p *Project) Open(name string) (*os.File, error) {
-	return nil, nil
+	file, err := os.OpenFile(p.FilePath(name), os.O_CREATE|os.O_RDWR, configFilePerm)
+	if err != nil {
+		return nil, err
+	}
+	return file, nil
 }
 
 // OpenDefault returns an os.File from a name corresponding to a
@@ -78,27 +83,35 @@ func (p *Project) Open(name string) (*os.File, error) {
 // Warning, the file should be closed after usage.
 // If the file does not exist, it will be created first.
 func (p *Project) OpenDefault() (*os.File, error) {
-	return nil, nil
+	return p.Open(defaultFile)
 }
 
 // Remove deletes a configuration file from the current project.
 func (p *Project) Remove(name string) error {
-	return nil
+	return os.RemoveAll(p.FilePath(name))
 }
 
 // RemoveDefault deletes the default configuration file from the current project.
 func (p *Project) RemoveDefault() error {
-	return nil
+	return p.Remove(defaultFile)
 }
 
 // Truncate empties a configuration file from the current project.
 func (p *Project) Truncate(name string) error {
+	file, err := p.Open(p.FilePath(name))
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	file.Truncate(0)
+
 	return nil
 }
 
 // TruncateDefault empties the default configuration file from the current project.
 func (p *Project) TruncateDefault() error {
-	return nil
+	return p.Truncate(defaultFile)
 }
 
 // Destroy removes the project configuration folder

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"sort"
 
 	"github.com/lobre/pocket2notion/config"
 	"github.com/pkg/errors"
@@ -63,6 +64,8 @@ func retrievePocketItems(config *config.Project, args arguments) ([]api.Item, er
 	for _, item := range res.List {
 		items = append(items, item)
 	}
+
+	sort.Sort(bySortID(items))
 
 	return items, nil
 }
@@ -138,3 +141,9 @@ func obtainPocketAccessToken(consumerKey string) (*auth.Authorization, error) {
 
 	return auth.ObtainAccessToken(consumerKey, requestToken)
 }
+
+type bySortID []api.Item
+
+func (s bySortID) Len() int           { return len(s) }
+func (s bySortID) Less(i, j int) bool { return s[i].SortId < s[j].SortId }
+func (s bySortID) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }

@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/lobre/pocket2notion/config"
+	"github.com/lobre/pocket2notion/notion/clipper"
 	"github.com/motemen/go-pocket/api"
 )
 
@@ -21,8 +23,11 @@ type arguments struct {
 	pocketSearchFilter    string
 	pocketSinceFilter     int
 
-	notionTags    bool
-	notionBlockID string
+	notionTags      bool
+	notionBatchSize int
+	notionBlockID   string
+
+	listOnly bool
 }
 
 func main() {
@@ -41,12 +46,15 @@ func main() {
 	flag.StringVar(&args.pocketSearchFilter, "search", "", "Only import Pocket items matching with search")
 	flag.IntVar(&args.pocketSinceFilter, "since", 0, "Only import Pocket items since a timestamp")
 
+	flag.IntVar(&args.notionBatchSize, "notion-batch", 5, "Import into Notion by batch of <n> per http call")
 	flag.BoolVar(&args.notionTags, "notion-tags", true, "Append Pocket tags to Notion by appending them to the item title with a hashtag")
+
+	flag.BoolVar(&args.listOnly, "list-only", false, "Don't import into Notion but just list Pocket items (NOTION_BLOCK_ID not required with this flag)")
 
 	flag.Parse()
 
 	args.notionBlockID = flag.Arg(0)
-	if args.notionBlockID == "" {
+	if args.notionBlockID == "" && !args.listOnly {
 		usage()
 		os.Exit(1)
 	}
@@ -64,46 +72,67 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = pushToNotion(config, items, args.notionBlockID)
+	err = pushToNotion(config, args, items)
 	if err != nil {
 		fmt.Printf("%v\n", err)
 		os.Exit(1)
 	}
 }
 
-func pushToNotion(config *config.Project, items []api.Item, blockID string) error {
+func pushToNotion(config *config.Project, args arguments, items []api.Item) error {
 	token, err := loadStringFromConfig(config.FilePath(notionTokenFile))
 	if err != nil {
 		return err
 	}
-	fmt.Println(token)
 
-	// c := clipper.New(token)
+	fmt.Println("List of items items")
 
-	// list items
-	for _, item := range items {
-		fmt.Printf("URL: %s\n", item.GivenURL)
-		fmt.Printf("Title: %s\n", item.GivenTitle)
+	clip := clipper.New(token)
 
-		var tags bytes.Buffer
-		for tag := range item.Tags {
-			tags.WriteString(fmt.Sprintf(" #%s", tag))
+	// process by batch
+	for i := 0; i < len(items); i += args.notionBatchSize {
+		j := i + args.notionBatchSize
+		if j > len(items) {
+			j = len(items)
 		}
-		fmt.Printf("Tags: %v\n", tags.String())
+
+		for _, item := range items[i:j] {
+			fmt.Printf("> URL: %s\n", item.GivenURL)
+			fmt.Printf("  Title: %s\n", item.GivenTitle)
+
+			notionItem := clipper.Item{
+				Title: item.GivenTitle,
+				URL:   item.GivenURL,
+			}
+
+			if args.notionTags {
+				var tags bytes.Buffer
+				for tag := range item.Tags {
+					tags.WriteString(fmt.Sprintf(" #%s", tag))
+				}
+				fTags := strings.TrimSpace(tags.String())
+				fmt.Printf("  Tags: %v\n", fTags)
+
+				notionItem.Title = fmt.Sprintf("%s %s", notionItem.Title, fTags)
+			}
+
+			// prepare item to be clipped
+			if !args.listOnly {
+				clip.Load(notionItem)
+			}
+		}
+
+		// do the actual clipping request to Notion
+		if !args.listOnly {
+			fmt.Println("Pushing batch into Notion")
+			err = clip.Save(args.notionBlockID)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
-	// Prepare some items to be clipped
-	// c.Load(
-	// 	clipper.Item{Title: "My title", URL: "www.google.com"},
-	// 	clipper.Item{Title: "My second title", URL: "www.twitter.com"},
-	// )
-
-	// Do the actual clipping request to Notion
-	// err = c.Save(blockID)
-	// if err != nil {
-	// 	return err
-	// }
-
+	fmt.Println("Terminated")
 	return nil
 }
 

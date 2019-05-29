@@ -29,14 +29,18 @@ As there is no official Notion API, you will need to fetch the value of an authe
 
 ### 4. Run pocket2notion
 
-    ❯ ./pocket2notion -h
-    Usage: ./pocket2notion [OPTIONS] NOTION_BLOCK_ID
+    ❯ pocket2notion -h
+    Usage: pocket2notion [OPTIONS] NOTION_BLOCK_ID
     -archived
         Only import archived Pocket items
     -count int
         Number of Pocket items to import
     -favorited
         Only import favorited Pocket items
+    -list-only
+        Don't import into Notion but just list Pocket items (NOTION_BLOCK_ID not required with this flag)
+    -notion-batch int
+        Import into Notion by batch of <n> per http call (default 5)
     -notion-tags
         Append Pocket tags to Notion by appending them to the item title with a hashtag (default true)
     -search string
@@ -50,6 +54,7 @@ As there is no official Notion API, you will need to fetch the value of an authe
 
     pocket2notion --count 1 f238cd96359c4ac6b04fc33c4787afff
     pocket2notion --count 5 --tag=politics f238cd96359c4ac6b04fc33c4787afff
+    pocket2notion --count 3 --list-only --notion-tags=false
 
 ## Notion clipper package
 

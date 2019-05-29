@@ -29,22 +29,22 @@ As there is no official Notion API, you will need to fetch the value of an authe
 
 ### 4. Run pocket2notion
 
-        ❯ ./pocket2notion -h
-        Usage: ./pocket2notion [OPTIONS] NOTION_BLOCK_ID
-        -archived
-                Only import archived Pocket items
-        -count int
-                Number of Pocket items to import
-        -favorited
-                Only import favorited Pocket items
-        -notion-tags
-                Append Pocket tags to Notion by appending them to the item title with a hashtag (default true)
-        -search string
-                Only import Pocket items matching with search
-        -since int
-                Only import Pocket items since a timestamp
-        -tag string
-                Only import Pocket items matching with tag
+    ❯ ./pocket2notion -h
+    Usage: ./pocket2notion [OPTIONS] NOTION_BLOCK_ID
+    -archived
+        Only import archived Pocket items
+    -count int
+        Number of Pocket items to import
+    -favorited
+        Only import favorited Pocket items
+    -notion-tags
+        Append Pocket tags to Notion by appending them to the item title with a hashtag (default true)
+    -search string
+        Only import Pocket items matching with search
+    -since int
+        Only import Pocket items since a timestamp
+    -tag string
+        Only import Pocket items matching with tag
 
 ### Examples
 

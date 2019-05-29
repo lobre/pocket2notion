@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 
@@ -70,7 +68,7 @@ func retrievePocketItems(config *config.Project, args arguments) ([]api.Item, er
 }
 
 func newPocketClient(config *config.Project) (*api.Client, error) {
-	consumerKey, err := getPocketConsumerKey(config)
+	consumerKey, err := loadStringFromConfig(config.FilePath(pocketConsumerKeyFile))
 	if err != nil {
 		return nil, errors.Wrap(err, "can't get pocket consumer key from config")
 	}
@@ -81,14 +79,6 @@ func newPocketClient(config *config.Project) (*api.Client, error) {
 	}
 
 	return api.NewClient(consumerKey, accessToken.AccessToken), nil
-}
-
-func getPocketConsumerKey(config *config.Project) (string, error) {
-	consumerKey, err := ioutil.ReadFile(config.FilePath(pocketConsumerKeyFile))
-	if err != nil {
-		return "", err
-	}
-	return string(bytes.SplitN(consumerKey, []byte("\n"), 2)[0]), nil
 }
 
 func restorePocketAccessToken(config *config.Project, consumerKey string) (*auth.Authorization, error) {

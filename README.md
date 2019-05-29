@@ -48,8 +48,8 @@ As there is no official Notion API, you will need to fetch the value of an authe
 
 ### Examples
 
-    pocket2notion --count 1
-    pocket2notion --count 5 --tag=politics
+    pocket2notion --count 1 f238cd96359c4ac6b04fc33c4787afff
+    pocket2notion --count 5 --tag=politics f238cd96359c4ac6b04fc33c4787afff
 
 ## Notion clipper package
 

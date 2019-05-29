@@ -34,7 +34,7 @@ As there is no official Notion API, you will need to fetch the value of an authe
     -archived
         Only import archived Pocket items
     -count int
-        Number of Pocket items to import
+        Number of Pocket items to import (newest clipped items first)
     -favorited
         Only import favorited Pocket items
     -list-only

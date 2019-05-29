@@ -39,7 +39,7 @@ func main() {
 	var args arguments
 
 	// filters
-	flag.IntVar(&args.pocketCountFilter, "count", 0, "Number of Pocket items to import")
+	flag.IntVar(&args.pocketCountFilter, "count", 0, "Number of Pocket items to import (newest clipped items first)")
 	flag.BoolVar(&args.pocketFavoritedFilter, "favorited", false, "Only import favorited Pocket items")
 	flag.BoolVar(&args.pocketArchivedFilter, "archived", false, "Only import archived Pocket items")
 	flag.StringVar(&args.pocketTagFilter, "tag", "", "Only import Pocket items matching with tag")

@@ -97,12 +97,12 @@ func pushToNotion(config *config.Project, args arguments, items []api.Item) erro
 		}
 
 		for _, item := range items[i:j] {
-			fmt.Printf("> URL: %s\n", item.GivenURL)
-			fmt.Printf("  Title: %s\n", item.GivenTitle)
+			fmt.Printf("> URL: %s\n", item.ResolvedURL)
+			fmt.Printf("  Title: %s\n", item.ResolvedTitle)
 
 			notionItem := clipper.Item{
-				Title: item.GivenTitle,
-				URL:   item.GivenURL,
+				Title: item.ResolvedTitle,
+				URL:   item.ResolvedURL,
 			}
 
 			if args.notionTags {

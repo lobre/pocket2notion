@@ -67,6 +67,16 @@ func retrievePocketItems(config *config.Project, args arguments) ([]api.Item, er
 
 	sort.Sort(bySortID(items))
 
+	if args.pocketDeleteOrg {
+		for _, item := range items {
+			delAct := &api.Action {
+				Action: "delete",
+				ItemID: item.ItemID,
+			}
+			client.Modify(delAct)
+		}
+	}
+
 	return items, nil
 }
 

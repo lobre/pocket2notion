@@ -22,6 +22,7 @@ type arguments struct {
 	pocketTagFilter       string
 	pocketSearchFilter    string
 	pocketSinceFilter     int
+	pocketDeleteOrg       bool
 
 	notionTags      bool
 	notionBatchSize int
@@ -45,6 +46,7 @@ func main() {
 	flag.StringVar(&args.pocketTagFilter, "tag", "", "Only import Pocket items matching with tag")
 	flag.StringVar(&args.pocketSearchFilter, "search", "", "Only import Pocket items matching with search")
 	flag.IntVar(&args.pocketSinceFilter, "since", 0, "Only import Pocket items since a timestamp")
+	flag.BoolVar(&args.pocketDeleteOrg, "delete", false, "Delete original in Pocket")
 
 	flag.IntVar(&args.notionBatchSize, "notion-batch", 5, "Import into Notion by batch of <n> per http call")
 	flag.BoolVar(&args.notionTags, "notion-tags", true, "Append Pocket tags to Notion by appending them to the item title with a hashtag")
